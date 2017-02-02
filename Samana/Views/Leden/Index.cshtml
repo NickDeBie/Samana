@@ -1,0 +1,183 @@
+﻿@model Samana.ViewModels.LedenViewModel
+
+<div class="container col-lg-12">
+    <div class="col-lg-3 container">
+        <div class="panel-group" id="algemeenpanel">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#algemeenpanel" href="#algemeen">
+                            Algemeen
+                        </a>
+                    </h4>
+                </div>
+                <div class="panel-collapse collapse in" id="algemeen">
+                    <div class="panel-body">
+                        <input type="button" value="Nieuw lid aanmaken" onclick="location.href='@Url.Action("Create","Lid")'" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#algemeenpanel" href="#exportOptions">
+                            Export Opties
+                        </a>
+                    </h4>
+                </div>
+                <div class="panel-collapse collapse in" id="exportOptions">
+                    <div class="panel-body">
+                     
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-lg-9">
+        <div>
+
+            <form method="post" action="@Url.Action("Zoeken", "Lid")">
+                <h2>LedenLijst</h2>
+                <select name="zoekoptie" class="">
+                    <option value="Voornaam">Voornaam</option>
+                    <option value="Achternaam">Achternaam</option>
+                </select>
+
+                <input name="tekst" type="text" class="" />
+                <button class="btn"><img src="~/Img/Icons/Magnify Glass.png" /></button>
+            </form>
+
+
+
+        </div>
+        @if (Model.Leden != null)
+        {
+            string aantalleden = " leden";
+            <div class="col-lg-12">
+
+                <div class="col-lg-8" style="margin:0;padding:0;">
+                    <div class="col-lg-2" style="margin:0;padding:0;">
+                        <button class="form-control" onclick="location.href='@Url.Action("ToonAlleLeden", "Lid")'"><img src="~/Img/Icons/Users 2.png" /></button>
+                    </div>
+                    <div class="col-lg-2" style="margin:0;padding:0;">
+                        @Html.DropDownList("lidsoorten", Model.LidsoortenSelectList, htmlAttributes: new { @class = "form-control", @onchange = "lidsoortSelect(this)" })
+                    </div>
+                    <div style="clear:both;">
+                        @switch (Model.Leden.Count())
+                        {
+                            case 1:
+                                if (Model.Leden.First().Geslacht == DataSource.Enums.Geslacht.man)
+                                {
+                                    <img src="~/Img/Icons/User Male.png" />
+                                }
+                                else
+                                {
+                                    <img src="~/Img/Icons/User Female.png" />
+                                }
+                                aantalleden = " lid";
+                                @Model.Leden.Count() @aantalleden;
+                                break;
+                            case 2:
+                                <img src="~/Img/Icons/Users 1@2x.png" /> @Model.Leden.Count() @aantalleden;
+                                break;
+                            default:
+                                <img src="~/Img/Icons/Users 2@2x.png" /> @Model.Leden.Count() @aantalleden;
+                                break;
+                        }
+                    </div>
+                </div>
+
+                <div class="col-lg-4" style="margin:0;padding:0;">
+                    <button type="submit" onclick="SetSelectedCheckboxes()" class="form-control" style="width:auto;float:right;">add</button>
+                </div>
+            </div>
+            <div style="margin:50px 0px 0px 0px;height:550px;width:100%; overflow-y:scroll;" id="target">
+
+                @foreach (var lid in Model.Leden)
+                {
+                    if (lid != null)
+                    {
+                        <div class="user-container" style="clear:both;">
+                            <div class="user-col user-col-1">
+                                @switch (lid.Geslacht)
+                                {
+                                    case DataSource.Enums.Geslacht.man:
+                                        <img src="~/Img/Icons/male_user_icon_64.png" />
+                                        break;
+                                    case DataSource.Enums.Geslacht.vrouw:
+                                        <img src="~/Img/Icons/female_user_icon_64.png" />
+                                        break;
+                                    default:
+                                        <img src="~/Img/Icons/male_user_icon_64.png">
+                                        break;
+                                }
+                            </div>
+                            <div class="user-col user-col-2" style="margin:10px 0px 0px 0px;">
+                                <div class="user-heading">
+                                    @lid.Voornaam @lid.Achternaam <div style="font-size:11px;display:inline;">(@lid.Lidsoort)</div>
+                                </div>
+                                <div class="user-btn-2">
+                                    <button type="button" class="user-btn-transparant" onclick="location.href='@Url.Action("Edit", "Lid", new { id = lid.Id })'"><img src="~/Img/Icons/Wrench16.png" /></button>
+                                </div>
+                                <div class="user-btn-2">
+                                    <button type="submit" class="user-btn-transparant" onclick="location.href='@Url.Action("Delete", "Lid", new { id = lid.Id })'"><img src="~/Img/Icons/Trash16.png" /></button>
+                                </div>
+
+
+                                <div class="user-info">
+                                    <ul>
+                                        @if (lid.Adres != null)
+                                        {
+                                            <li>@lid.Adres @lid.HuisNr</li>
+                                        }
+                                        <li>@lid.Postcode, @lid.Gemeente</li>
+                                        @if (lid.MentorId != null || lid.MentorId > 0)
+                                        {
+                                            <li><b><i>mentor:</i></b> @lid.Mentor</li>
+                                        }
+                                        @if ((lid.MentorId == null || lid.MentorId == 0) && (lid.LidsoortId == 2 || lid.LidsoortId == 3))
+                                        {
+                                            <li>
+                                                @Html.ActionLink("Kies een mentor", "SelectMentor", "Lid", new { id = @lid.Id }, null)
+                                            </li>
+                                        }
+                                        @if (lid.LidsoortId == 1)
+                                        {
+                                            <li>
+                                                <ul style="display:block;list-style:none;margin:0;padding:0;">
+                                                    <li style="display:inline;font-weight:bold;font-style:italic;">beschermelingen: </li>
+                                                    @foreach (var besch in lid.Beschermelingen)
+                                                    {
+                                                        <li style="display:inline;">@besch.Voornaam @besch.Achternaam, </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="user-col user-col-3">
+
+                                <div class="user-btn-1">
+                                    <button type="button" class="form-control" onclick="location.href='@Url.Action("AddLidToegevoegdeLeden", "Lid", new { id = lid.Id })'"><img src="~/pics/Icons/Curved Arrow Right.png" /></button>
+                                </div>
+
+                                <div class="user-btn-1" id="checkboxes">
+                                    <input type="checkbox" name="@lid.Id" class="form-control" />
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+</div>
+
+
