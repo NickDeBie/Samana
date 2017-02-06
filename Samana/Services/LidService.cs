@@ -18,13 +18,13 @@ namespace Samana.Services
 
         public List<Lid> GetAlleLeden()
         {
-            var leden = (_db.Leden.Include(l => l.GeboortePlaats).Include(l => l.Gemeente).Include(l => l.Lidsoort).Include(l => l.Mentor).Include(l => l.Verantwoordelijkheden)).ToList();
+            var leden = (_db.Leden.Include(l => l.Gemeente).Include(l => l.Lidsoort).Include(l => l.Mentor).Include(l => l.Verantwoordelijkheden)).Include(l=>l.NoodPersonen).OrderBy(o=>o.Achternaam).ToList();
             return leden;
         }
 
-        public ICollection<Lid> GetAlleMentoren()
+        public List<Lid> GetAlleMentoren()
         {
-            ICollection<Lid> mentoren = _db.Leden.Where(m => m.LidsoortId == 1).Distinct().ToList();
+            List<Lid> mentoren = _db.Leden.Where(m => m.LidsoortId == 1).Distinct().ToList();
             return mentoren;
         }
         public int GetMaxId()
@@ -48,35 +48,7 @@ namespace Samana.Services
             _db.Leden.Add(lid);
             _db.SaveChanges();
         }
-
-        public void EditLid(LidViewModel lidViewModel)
-        {
-            Lid lid = GetLid(lidViewModel.Id);
-            lid.Id = lidViewModel.Id;
-            lid.Voornaam = lidViewModel.Voornaam;
-            lid.Achternaam = lidViewModel.Achternaam;
-            lid.Lidsoort = _db.Lidsoorten.Find(lidViewModel.LidsoortId);
-            lid.Geslacht = lidViewModel.Geslacht;
-            lid.GeboorteDatum = lidViewModel.GeboorteDatum;
-            lid.GeboortePlaats = _db.Gemeenten.Find(lidViewModel.GeboortePostcode);
-            lid.Adres = lidViewModel.Adres;
-            lid.HuisNr = lidViewModel.HuisNr;
-            lid.Gemeente = _db.Gemeenten.Find(lidViewModel.Postcode);
-            lid.RijksregisterNr = lidViewModel.RijksregisterNr;
-            lid.Tel = lidViewModel.Tel;
-            lid.GSM = lidViewModel.GSM;
-            lid.Email = lidViewModel.Email;
-            lid.NoodNr = lidViewModel.NoodNr;
-            lid.NoodNaam = lidViewModel.NoodNaam;
-            lid.Rolstoel = lidViewModel.Rolstoel;
-            lid.Rusthuis = lidViewModel.Rusthuis;
-            lid.ThuisGebonden = lidViewModel.ThuisGebonden;
-            lid.Verantwoordelijkheden = lidViewModel.Verantwoordelijkheden;
-            lid.Beschermelingen = lidViewModel.Beschermelingen;
-            lid.Mentor = _db.Leden.Find(lidViewModel.MentorId);
-            lid.Opmerking = lidViewModel.Opmerking;
-            _db.SaveChanges();
-        }
+     
         public void BewaarVerantwoordelijkheden(LidViewModel lidViewModel)
         {
             Lid lid = _db.Leden.Find(lidViewModel.Id);
@@ -87,22 +59,22 @@ namespace Samana.Services
             }
             _db.SaveChanges();
         }
-        public ICollection<Lid> GetBeschermelingenPerKernlid(int id)
+        public List<Lid> GetBeschermelingenPerKernlid(int id)
         {
-            ICollection<Lid> beschermelingen = _db.Leden.Where(m => m.MentorId == id).ToList();
+            List<Lid> beschermelingen = _db.Leden.Where(m => m.MentorId == id).ToList();
             return beschermelingen;
         }
-        public ICollection<Lid> GetLedenOpVoorNaam(string beginNaam)
+        public List<Lid> GetLedenOpVoorNaam(string beginNaam)
         {
-            return (from lid in _db.Leden where lid.Voornaam.StartsWith(beginNaam) orderby lid.Voornaam select lid).ToList();
+            return (from lid in _db.Leden where lid.Voornaam.StartsWith(beginNaam) orderby lid.Achternaam select lid).ToList();
         }
-        public ICollection<Lid> GetLedenOpAchterNaam(string beginNaam)
+        public List<Lid> GetLedenOpAchterNaam(string beginNaam)
         {
             return (from lid in _db.Leden where lid.Achternaam.StartsWith(beginNaam) orderby lid.Achternaam select lid).ToList();
         }
-        public ICollection<Lid> GetLedenPerSoort(int? id)
+        public List<Lid> GetLedenPerSoort(int? id)
         {
-            return (from lid in _db.Leden where lid.LidsoortId == id orderby lid.Voornaam select lid).ToList();
+            return (from lid in _db.Leden where lid.LidsoortId == id orderby lid.Achternaam select lid).ToList();
         }
         public LidViewModel LidToLidViewModel(Lid lid)
         {
@@ -115,8 +87,6 @@ namespace Samana.Services
                 LidsoortId = lid.LidsoortId,
                 Geslacht = lid.Geslacht,
                 GeboorteDatum = lid.GeboorteDatum,
-                GeboortePostcode = Convert.ToInt16(lid.GeboortePlaats?.Postcode ?? null),
-                GeboortePlaats = lid.GeboortePlaats?.Plaats ?? null,
                 Adres = lid.Adres,
                 HuisNr = lid.HuisNr,
                 Postcode = Convert.ToInt16(lid.Gemeente?.Postcode ?? null),
@@ -125,11 +95,12 @@ namespace Samana.Services
                 Tel = lid.Tel,
                 GSM = lid.GSM,
                 Email = lid.Email,
-                NoodNr = lid.NoodNr,
-                NoodNaam = lid.NoodNaam,
                 Rolstoel = lid.Rolstoel,
                 Rusthuis = lid.Rusthuis,
                 ThuisGebonden = lid.ThuisGebonden,
+                Rollator = lid.Rollator,
+                LiggendeZieke = lid.LiggendeZieke,
+                GaandeZieke = lid.GaandeZieke,
                 Verantwoordelijkheden = lid.Verantwoordelijkheden?.ToList() ?? null,
                 Beschermelingen = lid.Beschermelingen?.ToList() ?? null,
                 Mentor = (lid.Mentor?.Voornaam + " " + lid.Mentor?.Achternaam) ?? null,
@@ -149,7 +120,7 @@ namespace Samana.Services
             return ledenViewModel;
         }
 
-        public Lid SaveLidViewModelToLid(LidViewModel lidViewModel)
+        public void SaveLidViewModelToDb(LidViewModel lidViewModel)
         {
             Lid lid = _db.Leden.Find(lidViewModel.Id);
             lid.Voornaam = lidViewModel.Voornaam;
@@ -157,7 +128,6 @@ namespace Samana.Services
             lid.LidsoortId = lidViewModel.LidsoortId;
             lid.Geslacht = lidViewModel.Geslacht;
             lid.GeboorteDatum = lidViewModel.GeboorteDatum;
-            lid.GeboortePlaatsId = lidViewModel.GeboortePostcode;
             lid.Adres = lidViewModel.Adres;
             lid.HuisNr = lidViewModel.HuisNr;
             lid.GemeenteId = lidViewModel.Postcode;
@@ -165,19 +135,59 @@ namespace Samana.Services
             lid.Tel = lidViewModel.Tel;
             lid.GSM = lidViewModel.GSM;
             lid.Email = lidViewModel.Email;
-            lid.NoodNr = lidViewModel.NoodNr;
-            lid.NoodNaam = lidViewModel.NoodNaam;
             lid.Rolstoel = lidViewModel.Rolstoel;
             lid.Rusthuis = lidViewModel.Rusthuis;
             lid.ThuisGebonden = lidViewModel.ThuisGebonden;
+            lid.Rollator = lidViewModel.Rollator;
+            lid.LiggendeZieke = lidViewModel.LiggendeZieke;
+            lid.GaandeZieke = lidViewModel.GaandeZieke;
             lid.Verantwoordelijkheden = lidViewModel.Verantwoordelijkheden;
-            //lid.Beschermelingen = lidViewModel.Beschermelingen;
-            //lid.MentorId = lidViewModel.MentorId;
+            lid.Beschermelingen = lidViewModel.Beschermelingen;
+            lid.MentorId = lidViewModel.MentorId != 0 ? lidViewModel.MentorId:null ;
             lid.Opmerking = lidViewModel.Opmerking;
-
             _db.SaveChanges();
+        }
+        public void SaveNewLidViewModelToDb(LidViewModel lidViewModel)
+        {
+            Lid lid = ConvertLidviewModelToLid(lidViewModel);
+            lid.Id = GetMaxId() + 1;
+            _db.Leden.Add(lid);
+            _db.SaveChanges();
+        }
+        public Lid ConvertLidviewModelToLid(LidViewModel lidViewModel)
+        {
+            Lid lid = new Lid();
+            lid.Voornaam = lidViewModel.Voornaam;
+            lid.Achternaam = lidViewModel.Achternaam;
+            lid.LidsoortId = lidViewModel.LidsoortId;
+            lid.Geslacht = lidViewModel.Geslacht;
+            lid.GeboorteDatum = lidViewModel.GeboorteDatum;
+            lid.Adres = lidViewModel.Adres;
+            lid.HuisNr = lidViewModel.HuisNr;
+            lid.GemeenteId = lidViewModel.Postcode;
+            lid.RijksregisterNr = lidViewModel.RijksregisterNr;
+            lid.Tel = lidViewModel.Tel;
+            lid.GSM = lidViewModel.GSM;
+            lid.Email = lidViewModel.Email;
+            lid.Rolstoel = lidViewModel.Rolstoel;
+            lid.Rusthuis = lidViewModel.Rusthuis;
+            lid.ThuisGebonden = lidViewModel.ThuisGebonden;
+            lid.Rollator = lidViewModel.Rollator;
+            lid.LiggendeZieke = lidViewModel.LiggendeZieke;
+            lid.GaandeZieke = lidViewModel.GaandeZieke;
+            lid.Verantwoordelijkheden = lidViewModel.Verantwoordelijkheden;
+            lid.Beschermelingen = lidViewModel.Beschermelingen;
+            lid.MentorId = lidViewModel.MentorId != 0 ? lidViewModel.MentorId : null;
+            lid.Opmerking = lidViewModel.Opmerking;
             return lid;
         }
+
+        public void deleteLidViewModelFromDb(int? id)
+        {
+            _db.Leden.Remove(_db.Leden.Find(id));
+            _db.SaveChanges();
+        }
+
         public void BewaarMentor(LidViewModel lidviewmodel)
         {
             Lid lid = GetLid(lidviewmodel.Id);
@@ -191,6 +201,10 @@ namespace Samana.Services
             int age = now.Year - geboortedatum.Year;
             if (now < geboortedatum.AddYears(age)) age--;
             return age.ToString();
+        }
+        public string GetLidSoort(int id)
+        {
+            return _db.Lidsoorten.Find(id).Soort;
         }
     }
 }

@@ -1,0 +1,7 @@
+﻿@model Samana.ViewModels.LedenViewModel
+
+@using (Html.BeginForm("Create", "Leden", FormMethod.Post, new { @class = "form-style-1" }))
+{
+    <div></div>
+    @Html.Partial("~/Views/Partials/LidForm.cshtml",Model);
+}

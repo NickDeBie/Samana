@@ -1,0 +1,28 @@
+﻿@model DataSource.Model.NoodPersoon
+<div>
+    @Html.ActionLink("Terug naar ledenlijst", "Index")
+</div>
+@using (Html.BeginForm("AddNoodPersoon", "Leden", FormMethod.Post, new { @class = "form-style-1" }))
+{
+    <ul>
+        <li>
+            <label for="Voornaam">Voornaam</label>
+            @Html.EditorFor(m => m.Voornaam)
+        </li>
+        <li>
+            <label for="NoodPersonen.First().Achternaam">Achternaam</label>
+            @Html.EditorFor(m => m.Achternaam)
+        </li>
+        <li>
+            <label for="NoodPersonen.First().Relatie">Relatie</label>
+            @Html.EditorFor(m => m.Relatie)
+        </li>
+        <li>
+            <label for="NoodPersonen.First().Numme">Nummer</label>
+            @Html.EditorFor(m => m.Nummer)
+        </li>
+        <li>
+            <input type="submit" value="Bewaar persoon" />
+        </li>
+    </ul>
+}

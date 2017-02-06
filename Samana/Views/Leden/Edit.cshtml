@@ -1,0 +1,11 @@
+﻿@model Samana.ViewModels.LedenViewModel
+
+<div>
+    @Html.ActionLink("Terug naar ledenlijst", "Index")
+</div>
+
+@using (Html.BeginForm("Edit", "Leden", FormMethod.Post, new { @class = "form-style-1" }))
+{
+    <div></div>
+    @Html.Partial("~/Views/Partials/LidForm.cshtml", Model);
+}

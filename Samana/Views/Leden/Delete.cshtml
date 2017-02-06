@@ -1,0 +1,11 @@
+﻿@model Samana.ViewModels.LidViewModel
+<div>
+    @Html.ActionLink("Terug naar ledenlijst", "Index")
+</div>
+@using (Html.BeginForm("Delete", "Leden", FormMethod.Post))
+{
+<div>
+    @Model.Voornaam @Model.Achternaam
+</div>
+<input type="submit"  value="remove"/>
+}

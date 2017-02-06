@@ -85,6 +85,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -162,21 +167,29 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ExportToExcelService.cs" />
     <Compile Include="Services\GemeenteService.cs" />
     <Compile Include="Services\LidService.cs" />
     <Compile Include="Services\LidSoortService.cs" />
+    <Compile Include="Services\NoodPersoonService.cs" />
     <Compile Include="ViewModels\LedenViewModel.cs" />
     <Compile Include="ViewModels\LidViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\SamanaStyle.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Img\Icons\Add16.png" />
+    <Content Include="Img\Icons\Excel16.png" />
     <Content Include="Img\Icons\female_user_icon_64.png" />
+    <Content Include="Img\Icons\Magnify Glass.png" />
     <Content Include="Img\Icons\male_user_icon_64.png" />
+    <Content Include="Img\Icons\system-delete-icon.png" />
+    <Content Include="Img\Icons\Team-Members-Icon.png" />
     <Content Include="Img\Icons\Trash16.png" />
     <Content Include="Img\Icons\User Female.png" />
     <Content Include="Img\Icons\User Male.png" />
@@ -184,6 +197,7 @@
     <Content Include="Img\Icons\Users 2%402x.png" />
     <Content Include="Img\Icons\Users 2.png" />
     <Content Include="Img\Icons\Wrench16.png" />
+    <Content Include="Img\samana.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -200,6 +214,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\SamanaScript.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -214,6 +229,12 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Leden\Index.cshtml" />
+    <Content Include="Views\Leden\Create.cshtml" />
+    <Content Include="Views\Partials\LidForm.cshtml" />
+    <Content Include="Views\Leden\Edit.cshtml" />
+    <Content Include="Views\Leden\Delete.cshtml" />
+    <Content Include="Views\Leden\AddNoodPersoon.cshtml" />
+    <Content Include="Views\Leden\SelectMentor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -232,6 +253,17 @@
       <Project>{385e6c0e-8b76-4c02-964d-7afd04ba9318}</Project>
       <Name>DataSource</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

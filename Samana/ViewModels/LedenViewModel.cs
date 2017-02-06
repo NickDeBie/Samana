@@ -15,19 +15,15 @@ namespace Samana.ViewModels
             MentorenSelectList = CreateMentorenSelectList();
             LidsoortenSelectList = CreateLidsoortenSelectList();
             GemeenteSelectList = CreateGemeentenSelectList();
-            LedenToegevoegd = new List<LidViewModel>();
-            Leden = CreateLeden();
+            Leden = CreateLedenList();
         }
         public List<LidViewModel> Leden { get; set; }
         public ICollection<SelectListItem> MentorenSelectList { get; set; }
         public ICollection<SelectListItem> LidsoortenSelectList { get; set; }
         public ICollection<SelectListItem> GemeenteSelectList { get; set; }
-        public ICollection<SelectListItem> VerantwoordelijkheidSelectList { get; set; }
-        public List<LidViewModel> LedenToegevoegd { get; set; }
-        public List<LidViewModel> LedenZoeken { get; set; }
 
 
-        private List<LidViewModel> CreateLeden()
+        private List<LidViewModel> CreateLedenList()
         {
             List<LidViewModel> leden = new List<LidViewModel>();
             leden = _lidService.LedenToViewModelList(_lidService.GetAlleLeden());

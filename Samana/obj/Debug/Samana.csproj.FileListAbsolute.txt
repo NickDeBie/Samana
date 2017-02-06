@@ -57,3 +57,4 @@ C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\EntityFramework.SqlServer.
 C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\DataSource.pdb
 C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\EntityFramework.xml
 C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\EntityFramework.SqlServer.xml
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\obj\Debug\Samana.csproj.ResolveComReference.cache
