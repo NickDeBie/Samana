@@ -58,3 +58,14 @@ C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\DataSource.pdb
 C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\EntityFramework.xml
 C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\EntityFramework.SqlServer.xml
 C:\Users\Nick\Google Drive\Projects\Samana\Samana\obj\Debug\Samana.csproj.ResolveComReference.cache
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\ClosedXML.dll
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\DocumentFormat.OpenXml.dll
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\ClosedXML.pdb
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\Spire.Common.dll
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\Spire.License.dll
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\Spire.Pdf.dll
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\Spire.XLS.dll
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\Microsoft.mshtml.dll
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\System.Xml.dll
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\bin\System.Xml.Linq.dll
+C:\Users\Nick\Google Drive\Projects\Samana\Samana\obj\Debug\Interop.MSXML2.dll

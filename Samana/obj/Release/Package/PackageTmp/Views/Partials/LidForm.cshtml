@@ -1,0 +1,116 @@
+﻿@model Samana.ViewModels.LedenViewModel
+<script>
+    $(document).ready(function () {
+        setMentorListbox();
+    });
+    function setDropDown() {
+        setMentorListbox();
+    }
+</script>
+<ul>
+    <li>
+        <label for="Voornaam">Voornaam</label>
+        <input type="text" name="Voornaam" maxlength="100" placeholder="Vul hier je Voornaam in." value="@Model.Leden.First().Voornaam" />
+        @Html.ValidationMessageFor(m => m.Leden.First().Voornaam, "")
+    </li>
+    <li>
+        <label for="Achternaam">Achternaam</label>
+        <input type="text" name="Achternaam" maxlength="100" placeholder="Vul hier je Achternaam in." value="@Model.Leden.First().Achternaam" />
+        @Html.ValidationMessageFor(m => m.Leden.First().Achternaam, "")
+    </li>
+    <li>
+        <label for="LidSoortId">Lidsoort</label>
+        @Html.DropDownListFor(m => m.Leden.First().LidsoortId, new SelectList(Model.LidsoortenSelectList, "Value", "Text", Model.Leden.First().LidsoortId), htmlAttributes: new { @onchange = "setDropDown()" })
+        @Html.ValidationMessageFor(m => m.Leden.First().LidsoortId, "")
+    </li>
+    <li>
+        <label for="MentorId">Mentoren</label>
+        @Html.DropDownListFor(m => m.Leden.First().MentorId, new SelectList(Model.MentorenSelectList, "Value", "Text", Model.Leden.First().MentorId), new { @id = "mentorId" })
+        @Html.ValidationMessageFor(m => m.Leden.First().MentorId, "")
+    </li>
+    <li>
+        <label for="Geslacht">Geslacht</label>
+        @Html.EnumDropDownListFor(m => m.Leden.First().Geslacht)
+        @Html.ValidationMessageFor(m => m.Leden.First().Geslacht, "")
+    </li>
+    <li>
+        <label for="GeboorteDatum">Geboortedatum</label>
+        @Html.EditorFor(m => m.Leden.First().GeboorteDatum)
+        @Html.ValidationMessageFor(m => m.Leden.First().GeboorteDatum, "")
+    </li>
+    <li>
+        <label for="Adres">Adres</label>
+        <input type="text" name="Adres" maxlength="100" placeholder="Vul hier je adres in." value="@Model.Leden.First().Adres" />
+
+        @Html.ValidationMessageFor(m => m.Leden.First().Adres, "")
+    </li>
+    <li>
+        <label for="HuisNr">Huisnr</label>
+        <input type="number" name="HuisNr" maxlength="100" placeholder="Hier komt je huisnr." value="@Model.Leden.First().HuisNr" />
+        @Html.ValidationMessageFor(m => m.Leden.First().HuisNr, "")
+    </li>
+    <li>
+        <label for="Postcode">Postcode</label>
+        @Html.DropDownListFor(m => m.Leden.First().Postcode, new SelectList(Model.GemeenteSelectList, "Value", "Text", Model.Leden.First().Postcode))
+        @Html.ValidationMessageFor(m => m.Leden.First().Postcode, "")
+    </li>
+    <li>
+        <label for="RijksregisterNr">RijksregisterNr</label>
+        <input type="text" name="RijksregisterNr" maxlength="100" placeholder="Je rijksregisternr." value="@Model.Leden.First().RijksregisterNr" />
+        @Html.ValidationMessageFor(m => m.Leden.First().RijksregisterNr, "")
+    </li>
+    <li>
+        <label for="Tel">Tel</label>
+        <input type="text" name="Tel" maxlength="100" placeholder="Telefoonnummer." value="@Model.Leden.First().Tel" />
+        @Html.ValidationMessageFor(m => m.Leden.First().Tel, "")
+    </li>
+    <li>
+        <label for="GSM">GSM</label>
+        <input type="text" name="GSM" maxlength="100" placeholder="GSM-nummer" value="@Model.Leden.First().GSM" />
+        @Html.ValidationMessageFor(m => m.Leden.First().GSM, "")
+    </li>
+    <li>
+        <label for="Email">E-mail</label>
+        <input type="email" name="Email" maxlength="100" placeholder="E-mail adres" value="@Model.Leden.First().Email" />
+        @Html.ValidationMessageFor(m => m.Leden.First().Email, "")
+    </li>
+    <li>
+        <label for="Rolstoel">Rolstoel gebruiker</label>
+        @Html.EditorFor(m => m.Leden.First().Rolstoel)
+        @Html.ValidationMessageFor(m => m.Leden.First().Rolstoel, "")
+    </li>
+    <li>
+        <label for="Rusthuis">Rolstoel gebruiker</label>
+        @Html.EditorFor(m => m.Leden.First().Rusthuis)
+        @Html.ValidationMessageFor(m => m.Leden.First().Rusthuis, "")
+    </li>
+    <li>
+        <label for="ThuisGebonden">Thuisgebonden</label>
+        @Html.EditorFor(m => m.Leden.First().ThuisGebonden)
+        @Html.ValidationMessageFor(m => m.Leden.First().ThuisGebonden, "")
+    </li>
+    <li>
+        <label for="Rollator">Rollator</label>
+        @Html.EditorFor(m=>m.Leden.First().Rollator)
+        @Html.ValidationMessageFor(m=>m.Leden.First().Rollator,"")
+    </li>
+    <li>
+        <label for="LiggendeZieke">Liggende zieke</label>
+        @Html.EditorFor(m => m.Leden.First().LiggendeZieke)
+        @Html.ValidationMessageFor(m => m.Leden.First().LiggendeZieke, "")
+    </li>
+    <li>
+        <label for="GaandeZieke">Gaande zieke</label>
+        @Html.EditorFor(m => m.Leden.First().GaandeZieke)
+        @Html.ValidationMessageFor(m => m.Leden.First().GaandeZieke, "")
+    </li>
+    <li>
+        <label for="Opmerking">Opmerking</label>
+        <textarea name="Opmerking" onkeyup="adjust_textarea(this)"></textarea>
+        @Html.ValidationMessageFor(m => m.Leden.First().Opmerking, "")
+    </li>
+
+    <li>
+        <input type="submit" value="Bewaar" />
+    </li>
+</ul>

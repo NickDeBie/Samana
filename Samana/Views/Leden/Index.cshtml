@@ -6,7 +6,7 @@
         $.post('@Url.Action("Index","Leden")', { soortId: $(e).val() });
     }
     function RemovePerson(id) {
-        if(confirm("Verwijder persoon?")){
+        if (confirm("Verwijder persoon?")) {
             $.post('@Url.Action("RemoveNoodPersoon","Leden")', { id: parseInt(id) })
             location.reload();
         }
@@ -14,7 +14,40 @@
             return false;
         }
     }
+    var pageSize = 10;
+    var pageIndex = 0;
+    $(document).ready(function () {
+        $("#loadingdiv").hide();
+        
+        $(window).scroll(function () {
+            if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                GetData();
+            }
+        });
+    })
 
+    function GetData() {
+        $.ajax({
+            type: 'POST',
+            url: ajaxActionUrl,
+            data: { "pageindex": pageIndex, "pagesize": pageSize },
+            dataType: 'json',
+            succes: function (data) {
+                if (data != null) {
+                    pageIndex++;
+                }
+            },
+            beforeSend: function () {
+                $("#progress").show();
+            },
+            complete: function () {
+                $("#progress").hide();
+            },
+            error: function () {
+                alert("Error while retrieving data!");
+            }
+        });
+    }
 </script>
 <div class="container col-lg-12">
 
@@ -32,7 +65,7 @@
                 </div>
                 <div class="panel-collapse collapse in" id="algemeen">
                     <div class="panel-body">
-                        <input type="button" value="Nieuw lid aanmaken" onclick="location.href='@Url.Action("Create", "Leden")'" class="form-control" />
+                        <input type="button" value="Nieuw lid aanmaken" onclick="location.href='@Url.Action("Create", "Leden")'" />
                     </div>
                 </div>
             </div>
@@ -41,7 +74,7 @@
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#" href="#options">
-                            Zoeken
+                            Info
                         </a>
                     </h4>
                 </div>
@@ -49,29 +82,49 @@
                     <div class="panel-body">
 
                         @*info over de getoonde leden*@
-                        @{string aantalleden = " leden";
-                            switch (Model.Leden.Count())
-                            {
-                                case 1:
-                                    if (Model.Leden.First().Geslacht == DataSource.Enums.Geslacht.man)
+                        <div>
+                            <p>
+                                @{string aantalleden = " leden";
+                                    switch (Model.Leden.Count())
                                     {
-                                        <img src="~/Img/Icons/User Male.png" />
+                                        case 1:
+                                            if (Model.Leden.First().Geslacht == DataSource.Enums.Geslacht.man)
+                                            {
+                                                <img src="~/Img/Icons/User Male.png" />
+                                            }
+                                            else
+                                            {
+                                                <img src="~/Img/Icons/User Female.png" />
+                                            }
+                                            aantalleden = " lid";
+                                            @Model.Leden.Count() @aantalleden;
+                                            break;
+                                        case 2:
+                                            <img src="~/Img/Icons/Users 1@2x.png" /> @Model.Leden.Count() @aantalleden;
+                                            break;
+                                        default:
+                                            <img src="~/Img/Icons/Users 2@2x.png" /> @Model.Leden.Count() @aantalleden;
+                                            break;
                                     }
-                                    else
-                                    {
-                                        <img src="~/Img/Icons/User Female.png" />
-                                    }
-                                    aantalleden = " lid";
-                                    @Model.Leden.Count() @aantalleden;
-                                    break;
-                                case 2:
-                                    <img src="~/Img/Icons/Users 1@2x.png" /> @Model.Leden.Count() @aantalleden;
-                                    break;
-                                default:
-                                    <img src="~/Img/Icons/Users 2@2x.png" /> @Model.Leden.Count() @aantalleden;
-                                    break;
-                            }
-                        }
+                                }
+                            </p>
+
+                        </div>
+                        <div>
+                            <p><b>Oudste lid: </b><i>@TempData["oudstelid"]</i></p>
+                        </div>
+                        <div>
+                            <p><b>Jongste lid: </b><i>@TempData["jongstelid"]</i></p>
+                        </div>
+                        <div>
+                            <p><b>Aantal kernleden: </b><i>@TempData["aantalkernleden"]</i></p>
+                        </div>
+                        <div>
+                            <p><b>Aantal medewerkers:</b> <i> @TempData["aantalmedewerkers"]</i></p>
+                        </div>
+                        <div>
+                            <p><b>Aantal gewone leden: </b> <i> @TempData["aantalgewoneleden"]</i></p>
+                        </div>
                         @*einde info over getoonde leden*@
 
 
@@ -90,7 +143,7 @@
                     <td>
                         @*toon alle leden*@
                         <h5>Toon alle leden</h5>
-                        <button class="form-control" onclick="location.href='@Url.Action("Index", "Leden")'"><img src="~/Img/Icons/Users 2.png" /></button>
+                        <button onclick="location.href='@Url.Action("Index", "Leden")'"><img src="~/Img/Icons/Users 2.png" /></button>
                         @*einde toon alle leden*@
                     </td>
 
@@ -98,7 +151,7 @@
                         @*zoeken op soort*@
                         <h5>Toon alle leden per soort</h5>
                         <form id="zoekopsoortform" method="post">
-                            <select onchange="lidsoortSelect(this)" name="soortId" class="form-control">
+                            <select onchange="lidsoortSelect(this)" name="soortId">
                                 <option>Kies een lidsoort</option>
                                 <option value="1">Alle Kernleden</option>
                                 <option value="2">Alle Medewerkers</option>
@@ -112,12 +165,12 @@
                         @* Zoeken op naam *@
                         <h5>Zoeken op naam</h5>
                         <form method="post" action="@Url.Action("Index", "Leden")">
-                            <select name="tekstParam" class="form-control">
+                            <select name="tekstParam">
                                 <option value="Voornaam">Voornaam</option>
                                 <option value="Achternaam">Achternaam</option>
                             </select>
-                            <input name="tekst" type="text" class="form-control" placeholder="Naam" />
-                            <button class="form-control"><img src="~/Img/Icons/Magnify Glass.png" /></button>
+                            <input name="tekst" type="text" placeholder="Naam" />
+                            <button><img src="~/Img/Icons/Magnify Glass.png" /></button>
                         </form>
                         @*Einde zoeken op naam*@
                     </td>
@@ -126,102 +179,111 @@
             </tbody>
         </table>
 
-        <div id="ledendiv">
+        
 
-            @if (Model.Leden != null)
-            {
-
-
-                <table class="table table-striped">
-                    <thead>
-
-                    </thead>
-                    <tbody>
+            @Html.Partial("LedenLoad",Model)
 
 
-                        @foreach (var lid in Model.Leden)
+            @*<div id="ledendiv">
+                @if (Model.Leden != null)
+    {
+
+
+        <table>
+            <thead>
+
+            </thead>
+            <tbody>
+
+
+                @foreach (var lid in Model.Leden)
+                {
+                    <tr>
+                        @if (lid != null)
                         {
-                            <tr>
-                                @if (lid != null)
+                            <td>
+                                @switch (lid.Geslacht)
                                 {
-                                    <td>
-                                        @switch (lid.Geslacht)
+                                    case DataSource.Enums.Geslacht.man:
+                                        <img src="~/Img/Icons/male_user_icon_64.png" />
+                                        break;
+                                    case DataSource.Enums.Geslacht.vrouw:
+                                        <img src="~/Img/Icons/female_user_icon_64.png" />
+                                        break;
+                                    default:
+                                        <img src="~/Img/Icons/male_user_icon_64.png">
+                                        break;
+                                }
+
+                                <div>@lid.Voornaam @lid.Achternaam (@lid.Lidsoort)</div>
+
+
+
+
+                            </td>
+                            <td>
+                                @if (lid.NoodPersonen != null)
+                                {
+                                    <b>Noodpersonen</b>
+                                    <ul>
+                                        @foreach (var pers in lid.NoodPersonen)
                                         {
-                                            case DataSource.Enums.Geslacht.man:
-                                                <img src="~/Img/Icons/male_user_icon_64.png" />
-                                                break;
-                                            case DataSource.Enums.Geslacht.vrouw:
-                                                <img src="~/Img/Icons/female_user_icon_64.png" />
-                                                break;
-                                            default:
-                                                <img src="~/Img/Icons/male_user_icon_64.png">
-                                                break;
+                                            <li><i>@pers.Voornaam @pers.Achternaam (@pers.Relatie):@pers.Nummer<button onclick="RemovePerson(@pers.Id)" title="Verwijder deze persoon" class="user-btn-transparant"><img src="~/Img/Icons/Trash16.png" /></button></i></li>
                                         }
+                                        <li><button onclick="location.href='@Url.Action( "AddNoodPersoon", "Leden", new { id = @lid.Id })'" title="Voeg een noodpersoon toe" class="user-btn-transparant">Noodpersoon toevoegen<img src="~/Img/Icons/Add16.png" /></button></li>
+                                    </ul>
+                                }
+                            </td>
 
-                                        <div>@lid.Voornaam @lid.Achternaam (@lid.Lidsoort)</div>
+                            <td>
 
 
 
-                                        
-                                    </td>
-                                    <td>
-                                        @if (lid.NoodPersonen != null)
-                                        {
-                                            <h5><b><i>Noodpersonen:</i></b><button onclick="location.href='@Url.Action( "AddNoodPersoon", "Leden", new { id = @lid.Id })'" title="Voeg een noodpersoon toe" class="user-btn-transparant"><img src="~/Img/Icons/Add16.png" /></button></h5>
-                                            <ul>
-                                                @foreach (var pers in lid.NoodPersonen)
-                                                {
-                                                    <li>@pers.Voornaam @pers.Achternaam (@pers.Relatie):@pers.Nummer<button onclick="RemovePerson(@pers.Id)" title="Verwijder deze persoon" class="user-btn-transparant"><img src="~/Img/Icons/Trash16.png" /></button></li>
-                                                }
-                                            </ul>
-                                        }
-                                    </td>
+                                @if (lid.MentorId != null || lid.MentorId > 0)
+                                {
+                                    <b>Mentor</b>
+                                    <p><i>@lid.Mentor</i></p>
+                                }
+                                @if ((lid.MentorId == null || lid.MentorId == 0) && (lid.LidsoortId == 2 || lid.LidsoortId == 3))
+                                {
 
-                                    <td>
-                                        
-               
-                                                                        
-                                            @if (lid.MentorId != null || lid.MentorId > 0)
-                                            {
-                                                <h5><b><i>Mentor:</i></b></h5> @lid.Mentor
-                                            }
-                                            @if ((lid.MentorId == null || lid.MentorId == 0) && (lid.LidsoortId == 2 || lid.LidsoortId == 3))
-                                            {
-                                                
-                                                    @Html.ActionLink("Kies een mentor", "SelectMentor", "Leden", new { id = @lid.Id }, null)
-                                                
-                                            }
-                                       
-                                            @if (lid.LidsoortId == 1)
-                                            {
-                                                <h5><b><i>Beschermelingen:</i></b></h5>
-                                                <ul>
-                                                    @foreach (var besch in lid.Beschermelingen)
-                                                    {
-                                                        <li>@besch.Voornaam @besch.Achternaam,</li>
-                                                    }
-                                                </ul>
-                                            }
-                                        
-
-                                    </td>
-                        <td>
-                            <button type="button" class="user-btn-transparant" onclick="location.href='@Url.Action("Edit", "Leden", new { id = lid.Id })'" title="Lid Bewerken"><img src="~/Img/Icons/Wrench16.png" /></button>
-
-                            <button type="button" class="user-btn-transparant" onclick="location.href='@Url.Action("Delete", "Leden", new { id = lid.Id })'" title="Lid Verwijderen"><img src="~/Img/Icons/Trash16.png" /></button>
-
-                            @if (lid.LidsoortId == 1)
-                            {
-                                <button type="button" class="user-btn-transparant" onclick="location.href='@Url.Action("MentorToExcel", "Leden", new { id = lid.Id })'" title="Beschermelingen afdrukken"><img src="~/Img/Icons/Excel16.png" /></button>
-                            }
-                        </td>
+                                    <p><i> @Html.ActionLink("Kies een mentor", "SelectMentor", "Leden", new { id = @lid.Id }, null)</i></p>
 
                                 }
-                            </tr>
+
+                                @if (lid.LidsoortId == 1)
+                                {
+                                    <b>Beschermelingen</b>
+                                    <ul>
+                                        @foreach (var besch in lid.Beschermelingen)
+                                        {
+                                            <li><i>@besch.Voornaam @besch.Achternaam,</i></li>
+                                        }
+                                    </ul>
+                                }
+
+
+                            </td>
+                            <td>
+                                <button type="button" class="user-btn-transparant" onclick="location.href='@Url.Action("Edit", "Leden", new { id = lid.Id })'" title="Lid Bewerken"><img src="~/Img/Icons/Wrench16.png" /></button>
+
+                                <button type="button" class="user-btn-transparant" onclick="location.href='@Url.Action("Delete", "Leden", new { id = lid.Id })'" title="Lid Verwijderen"><img src="~/Img/Icons/Trash16.png" /></button>
+
+                                @if (lid.LidsoortId == 1)
+                                {
+                                    <button type="button" class="user-btn-transparant" onclick="location.href='@Url.Action("MentorToExcel", "Leden", new { id = lid.Id })'" title="Beschermelingen afdrukken"><img src="~/Img/Icons/Excel16.png" /></button>
+                                }
+                            </td>
+
                         }
-                    </tbody>
-                </table>
-            }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    } </div>*@
+       
+        <div id="loadingdiv">
+            <img src="~/Img/Icons/Loading_icon.gif" />
         </div>
     </div>
 </div>

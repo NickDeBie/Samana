@@ -3,13 +3,13 @@ using Samana.Services;
 using Samana.ViewModels;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Microsoft.Office.Core;
-using Excel = Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
-using Microsoft.Ajax.Utilities;
 using System;
 using System.Linq;
-using System.Reflection;
+using ClosedXML.Excel;
+using System.Data;
+using System.IO;
+using DataSource;
+using System.Net;
 
 namespace Samana.Controllers
 {
@@ -23,17 +23,12 @@ namespace Samana.Controllers
         public ActionResult Index()
         {
             GeneralSetup();
+            SetInfo();
+
             return View(_ledenViewModel);
         }
 
-        public void GeneralSetup()
-        {
-            foreach (var pers in _noodPersoonService.GetAlleNoodPersonen())
-            {
-                _ledenViewModel.Leden.Find(m => m.Id == pers.LidId).NoodPersonen.Add(pers);
-            }
-        }
-
+      
         [HttpPost]
         public ActionResult Index(int? soortId, string tekst, string tekstParam, string sortParam)
         {
@@ -78,9 +73,36 @@ namespace Samana.Controllers
                     lid.NoodPersonen.Add(pers);
                 }
             }
+
+            SetInfo();
+
             return View(_ledenViewModel);
         }
 
+        public void GeneralSetup()
+        {
+            
+            foreach (var pers in _noodPersoonService.GetAlleNoodPersonen())
+            {
+                if(_ledenViewModel.Leden.Find(m=>m.Id == pers.LidId) != null){
+                    _ledenViewModel.Leden.Find(m => m.Id == pers.LidId).NoodPersonen.Add(pers);
+                }
+                
+            }
+        }
+
+        public void SetInfo()
+        {
+            LidViewModel oudstelid = _lidService.GetOudsteLid(_ledenViewModel.Leden);
+            TempData["oudstelid"] = oudstelid.Voornaam + " " + oudstelid.Achternaam + " (" + oudstelid.Leeftijd + " jaar)";
+
+            LidViewModel jongstelid = _lidService.GetjongsteLid(_ledenViewModel.Leden);
+            TempData["jongstelid"] = jongstelid.Voornaam + " " + jongstelid.Achternaam + " (" + jongstelid.Leeftijd + " jaar)";
+
+            TempData["aantalkernleden"] = _ledenViewModel.Leden.Count(m => m.LidsoortId == 1);
+            TempData["aantalmedewerkers"] = _ledenViewModel.Leden.Count(m => m.LidsoortId == 2);
+            TempData["aantalgewoneleden"] = _ledenViewModel.Leden.Count(m => m.LidsoortId == 3);
+        }
 
         public ActionResult Create()
         {
@@ -192,7 +214,7 @@ namespace Samana.Controllers
             LidViewModel lidViewModel = Session["Lid"] as LidViewModel;
             if (ModelState.IsValid)
             {
-                
+
                 lidViewModel.MentorId = mentorId;
                 _lidService.SaveLidViewModelToDb(lidViewModel);
                 return RedirectToAction("Index");
@@ -205,77 +227,40 @@ namespace Samana.Controllers
 
         public ActionResult MentorToExcel(int? id)
         {
-            var xlApp = new Excel.Application();
-            Excel.Workbook wb = xlApp.Workbooks.Add();
-            Excel.Worksheet ws = wb.Sheets[1];
+            string appPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-            _exportToExcelService.CreateExcelApp();
+            //string excelFilePath = @"C:\Users\Nick\Google Drive\Projects\Samana\Samana\Files\mentor_verjaardagen.xlsx";
+            //string picPath = @"C:\Users\Nick\Google Drive\Projects\Samana\Samana\Img\samana_meerhout.png";
 
-            ws.Shapes.AddPicture(@"c:\Users\Nick\Google Drive\Projects\Samana\Samana\Img\samana.png", MsoTriState.msoFalse, MsoTriState.msoCTrue, 0, 0, 195, 71);
+            string excelFilePath = @"C:\inetpub\wwwroot\Samana\files\mentor_verjaardagen.xlsx";
+            string picPath = @"C:\inetpub\wwwroot\Samana\Img\samana_meerhout.png";
 
-            Lid lid = _lidService.GetLid(id);
-            int teller = 1;
-            int row = 7;
+            _exportToExcelService.CreatePackage(excelFilePath, picPath);
+            _exportToExcelService.CreateMentorSheet(excelFilePath, id);
 
-            var style = ws.Application.ActiveWorkbook.Styles.Add("bold");
-            style.Font.Bold = true;
-            ((Excel.Range)ws.Cells[row, 2]).Style = "bold";
-            ws.Cells[row, 2] = DateTime.Now.Year + " " + DateTime.Now.ToString("MMMM");
-            ws.Cells[row + 2, 2] = lid.Achternaam + " " + lid.Voornaam;
 
-            int persTeller = 1;
-            ws.Cells[row + 4, 1] = persTeller;
-            ws.Cells[row + 4, 2] = lid.Achternaam + " " + lid.Voornaam + " (" + _lidService.GetLidSoort(lid.LidsoortId) + ")";
-            ws.Cells[row + 4, 4] = lid.Adres + " " + lid.HuisNr;
-            teller += 3;
-            foreach (var pers in lid.Beschermelingen)
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", "attachement;filename= mentoren_verjaardagen.xlsx");
+
+            XLWorkbook wb = new XLWorkbook(excelFilePath);
+
+            using (MemoryStream mStream = new MemoryStream())
             {
-                teller++;
-                persTeller++;
-                ws.Cells[row + teller, 1] = persTeller;
-                ws.Cells[row + teller, 2] = pers.Achternaam + " " + pers.Voornaam + " (" + _lidService.GetLidSoort(pers.LidsoortId) + ")";
-                ws.Cells[row + teller, 4] = pers.Adres + " " + pers.HuisNr;
+                wb.SaveAs(mStream);
+                mStream.WriteTo(Response.OutputStream);
+                Response.Flush();
+                Response.End();
             }
-            teller += 2;
-            ws.Cells[row + teller, 2] = lid.Beschermelingen.Count + 1 + " personen";
-            teller += 1;
-            
-            ws.Cells[row + teller, 2] = lid.Beschermelingen.Count + 1 + " huizen";
-            ws.Columns.Font.Size = "16";
-            ws.Columns.AutoFit();
-            
-
-
-            Excel.Worksheet ws2 = wb.Sheets.Add() as Excel.Worksheet;
-            
-            ws2.Cells[1, 2] = "Verjaardagen";
-            ((Excel.Range)ws2.Cells[1, 1]).Style = "bold";
-            int wsRij = 3;
-            foreach (var pers in lid.Beschermelingen.OrderBy(o => o.GeboorteDatum))
-            {
-                ws2.Cells[wsRij, 1] = wsRij - 2;
-                ws2.Cells[wsRij, 2] = pers.Achternaam + " " + pers.Voornaam + " (" + _lidService.GetLidSoort(pers.LidsoortId) + ")";
-                ws2.Cells[wsRij, 3] = pers.GeboorteDatum;
-                ws2.Cells[wsRij, 4] = _lidService.BerekenLeeftijd(pers.GeboorteDatum) + " jaar";
-                wsRij++;
-            }
-            ws2.Columns.Font.Size = "16";
-            ws2.Columns.AutoFit();
-            
-            var filename = xlApp.GetSaveAsFilename("test.xls", "Excel 2000-2003 Workbook (*.xls), *.xls");
-            if (!(filename is bool))
-            {
-                wb.SaveAs(filename, Excel.XlFileFormat.xlWorkbookNormal);
-                wb.Close();
-                Marshal.FinalReleaseComObject(wb);
-                xlApp.Quit();
-            }
-
-            
 
             GeneralSetup();
             return RedirectToAction("Index");
         }
+
+       
+
+       
+
 
     }
 }

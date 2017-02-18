@@ -27,6 +27,7 @@ namespace Samana.ViewModels
         {
             List<LidViewModel> leden = new List<LidViewModel>();
             leden = _lidService.LedenToViewModelList(_lidService.GetAlleLeden());
+            //leden = _lidService.LedenToViewModelList(_lidService.GetAlleLedenByStep(3,1));
             return leden;
         }
 

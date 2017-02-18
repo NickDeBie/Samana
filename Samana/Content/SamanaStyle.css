@@ -1,16 +1,84 @@
 ﻿body {
 }
 
+
+/*General input styling*/
+input{
+    width:auto;
+    border:1px solid #CCC;
+}
+
+input[type=button], input[type=submit], button{
+    border:1px solid #CCC;
+    background: rgba(255,255,255,1);
+    width: 100%;
+    max-width:100%;
+    padding:5px 5px 5px 0;
+}
+
+input:hover, button:hover{
+    background: rgba(240,240,240,1);
+    transition: background 0.3s;
+}
+
+
+/*End General input styling*/
+
+
+
+
 #ledendiv {
     margin: 50px 0px 0px 0px;
     padding: 10px;
-    height: 400px;
+    height: 500px;
     overflow-y: scroll;
+    border: 1px solid #CCC;
 }
 
-input[type="button"]:hover,input[type="submit"]:hover,button:hover{
-    background-color:#EEE;
-}
+    #ledendiv table {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+        #ledendiv table tr {
+            border: 1px solid #000;
+            background-color: rgba(252,252,252,1);
+            box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.3);
+        }
+
+        #ledendiv table td {
+            vertical-align: top;
+            padding-top: 10px;
+            padding-left: 15px;
+            padding-bottom: 10px;
+            border-top: 1px solid #CCC;
+            border-bottom: 1px solid #CCC;
+        }
+
+            #ledendiv table td:first-child {
+                border-left: 1px solid #CCC;
+            }
+
+            #ledendiv table td:last-child {
+                padding-right: 10px;
+                border-right: 1px solid #CCC;
+            }
+
+    #ledendiv ul {
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+
+        #ledendiv ul li {
+            list-style: none;
+        }
+
+
+
+
+
+
 .form-style-1 {
     max-width: 300px;
     margin: 50px auto;
@@ -136,11 +204,14 @@ input[type="button"]:hover,input[type="submit"]:hover,button:hover{
 
 .user-btn-transparant {
     width: auto;
-    height: auto;
-    margin-left: 2px;
+    height: 24px;
+    text-align:center;
+    vertical-align:middle;
+    margin:0;
+    margin-left: 5px;
+    padding:0 5px 0 5px;
     background-color: transparent;
-    border: 1px solid;
-    border-color: transparent;
+    border:1px solid #DDD;
     overflow: hidden;
     outline: none;
 }
@@ -149,6 +220,3 @@ input[type="button"]:hover,input[type="submit"]:hover,button:hover{
         border-color: #ccc;
         background-color: #EEE;
     }
-
-
-input

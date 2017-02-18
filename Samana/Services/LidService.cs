@@ -18,7 +18,15 @@ namespace Samana.Services
 
         public List<Lid> GetAlleLeden()
         {
-            var leden = (_db.Leden.Include(l => l.Gemeente).Include(l => l.Lidsoort).Include(l => l.Mentor).Include(l => l.Verantwoordelijkheden)).Include(l=>l.NoodPersonen).OrderBy(o=>o.Achternaam).ToList();
+            var leden = (_db.Leden.Include(l => l.Gemeente).Include(l => l.Lidsoort).Include(l => l.Mentor).Include(l => l.Verantwoordelijkheden).Include(l=>l.NoodPersonen).OrderBy(o=>o.Achternaam)).ToList();
+            return leden;
+        }
+
+        public List<Lid> GetAlleLedenByStep(int limit, int fromRowNumber)
+        {
+         
+            var leden = (_db.Leden.Include(l => l.Gemeente).Include(l => l.Lidsoort).Include(l => l.Mentor).Include(l => l.Verantwoordelijkheden).Include(l => l.NoodPersonen).OrderBy(o=>o.Achternaam).Skip(fromRowNumber).Take(limit)).ToList();
+            
             return leden;
         }
 
@@ -205,6 +213,55 @@ namespace Samana.Services
         public string GetLidSoort(int id)
         {
             return _db.Lidsoorten.Find(id).Soort;
+        }
+
+        public int AantalHuizen(List<Lid> list)
+        {
+            List<Lid> ledenHuizen = new List<Lid>();
+            foreach (var lid in list)
+            {
+                if (!ledenHuizen.Exists(s => s.Adres == lid.Adres && s.HuisNr == lid.HuisNr))
+                {
+
+                    ledenHuizen.Add(lid);
+                }
+            }
+            return ledenHuizen.Count();
+        }
+
+        public LidViewModel GetOudsteLid(List<LidViewModel> ledenList)
+        {
+            LidViewModel oudsteLid = new LidViewModel();
+
+            if (ledenList.Count != 0)
+            {
+                oudsteLid = ledenList.First();
+                foreach (var lid in ledenList)
+                {
+                    if(Convert.ToInt16(lid.Leeftijd) > Convert.ToInt16(oudsteLid.Leeftijd))
+                    {
+                        oudsteLid = lid;
+                    }
+                }
+            }
+            return oudsteLid;
+        }
+        public LidViewModel GetjongsteLid(List<LidViewModel> ledenList)
+        {
+            LidViewModel oudsteLid = new LidViewModel();
+
+            if (ledenList.Count != 0)
+            {
+                oudsteLid = ledenList.First();
+                foreach (var lid in ledenList)
+                {
+                    if (Convert.ToInt16(lid.Leeftijd) < Convert.ToInt16(oudsteLid.Leeftijd))
+                    {
+                        oudsteLid = lid;
+                    }
+                }
+            }
+            return oudsteLid;
         }
     }
 }

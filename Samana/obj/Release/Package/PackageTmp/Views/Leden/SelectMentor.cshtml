@@ -1,0 +1,20 @@
+﻿@model Samana.ViewModels.LedenViewModel
+
+
+<div class="container">
+    <h3>Selecteer een mentor voor @Model.Leden.First().Voornaam @Model.Leden.First().Achternaam</h3>
+</div>
+@using (Html.BeginForm("SelectMentor", "Leden", FormMethod.Post, new { @class = "form-style-1" }))
+{
+    
+    <ul>
+        <li>
+            <label for="MentorId">Mentoren</label>
+            @Html.DropDownListFor(m => m.Leden.First().MentorId, new SelectList(Model.MentorenSelectList, "Value", "Text", Model.Leden.First().MentorId), new { @id = "mentorId" })
+            @Html.ValidationMessageFor(m => m.Leden.First().MentorId, "")
+        </li>
+        <li>
+            <input type="submit" value="Bewaar mentor" />
+        </li>
+    </ul>
+}
