@@ -190,6 +190,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\SearchOption.cs" />
+    <Compile Include="Models\SearchOptionEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ExportToExcelService.cs" />
     <Compile Include="Services\GemeenteService.cs" />
@@ -218,6 +220,7 @@
     <Content Include="Img\Icons\Team-Members-Icon.png" />
     <Content Include="Img\Icons\Trash16.png" />
     <Content Include="Img\Icons\User Female.png" />
+    <Content Include="Img\Icons\User Male%402x.png" />
     <Content Include="Img\Icons\User Male.png" />
     <Content Include="Img\Icons\Users 1%402x.png" />
     <Content Include="Img\Icons\Users 2%402x.png" />
@@ -262,11 +265,10 @@
     <Content Include="Views\Leden\Delete.cshtml" />
     <Content Include="Views\Leden\AddNoodPersoon.cshtml" />
     <Content Include="Views\Leden\SelectMentor.cshtml" />
-    <Content Include="Views\Leden\LedenLoad.cshtml" />
+    <Content Include="Views\Partials\LedenData.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

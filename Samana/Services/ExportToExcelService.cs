@@ -163,5 +163,40 @@ namespace Samana.Services
 
             wb.SaveAs(excelFilePath);
         }
+        public void CreateVerjaardagen(string excelFilePath, int? id)
+        {
+            XLWorkbook wb = new XLWorkbook(excelFilePath);
+            var ws = wb.Worksheets.Add("Verjaardagen");
+            
+           
+            
+
+            LidViewModel kernlid = _lidService.LidToLidViewModel(_lidService.GetLid(id));
+            
+            
+            var kernlidrow = ws.Row(2);
+            kernlidrow.Cell(2).Value = kernlid.Voornaam + " " + kernlid.Achternaam;
+
+            DateTime now = DateTime.Now;
+            List<Lid> list = new List<Lid>();
+
+            list = kernlid.Beschermelingen.Where(m=>new DateTime(now.Year,m.GeboorteDatum.Month,m.GeboorteDatum.Day) >= now).OrderBy(m=> (new DateTime(now.Year, m.GeboorteDatum.Month, m.GeboorteDatum.Day) - now).TotalDays).ToList();
+            list.AddRange(kernlid.Beschermelingen.Where(m => new DateTime(now.Year, m.GeboorteDatum.Month, m.GeboorteDatum.Day) <= now).OrderBy(m => (new DateTime(now.Year, m.GeboorteDatum.Month, m.GeboorteDatum.Day) - now).TotalDays).ToList());
+
+            int i = 4;
+            foreach(var lid in list)
+            {
+                var row = ws.Row(i);
+                row.Cell(2).Value = lid.Voornaam + " " + lid.Achternaam;
+                row.Cell(3).Value = lid.GeboorteDatum;
+                row.Cell(4).Value = (new DateTime(now.Year,lid.GeboorteDatum.Month, lid.GeboorteDatum.Day) - now).TotalDays;
+                i++;
+            }
+
+            ws.Rows().Style.Font.FontSize = 14;
+            ws.Columns().AdjustToContents();
+
+            wb.SaveAs(excelFilePath);
+        }
     }
 }

@@ -1,11 +1,37 @@
 ﻿body {
 }
 
+
+/*General input styling*/
+input{
+    width:auto;
+    border:1px solid #CCC;
+}
+
+input[type=button], input[type=submit], button{
+    border:1px solid #CCC;
+    background: rgba(255,255,255,1);
+    width: 100%;
+    max-width:100%;
+    padding:5px;
+}
+
+input:hover, button:hover{
+    background: rgba(240,240,240,1);
+    transition: background 0.3s;
+}
+
+
+/*End General input styling*/
+
+
+
+
 #ledendiv {
     margin: 50px 0px 0px 0px;
     padding: 10px;
-    height: 400px;
-    overflow-y: scroll;
+    border: 1px solid #CCC;
+
 }
 
     #ledendiv table {
@@ -20,9 +46,9 @@
         }
 
         #ledendiv table td {
-            vertical-align:top;
+            vertical-align: top;
             padding-top: 10px;
-            padding-left:15px;
+            padding-left: 15px;
             padding-bottom: 10px;
             border-top: 1px solid #CCC;
             border-bottom: 1px solid #CCC;
@@ -37,10 +63,36 @@
                 border-right: 1px solid #CCC;
             }
 
+
+            .table-user {
+                border-collapse: separate;
+        border-spacing: 0 10px;
+                  border: 1px solid #000;
+                background-color: rgba(252,252,252,1);
+                box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.3);
+            }
+              .table-user td {
+            vertical-align: top;
+            padding-top: 10px;
+            padding-left: 15px;
+            padding-bottom: 10px;
+            border-top: 1px solid #CCC;
+            border-bottom: 1px solid #CCC;
+        }
+
+               .table-user td:first-child {
+                border-left: 1px solid #CCC;
+            }
+
+            .table-user td:last-child {
+                padding-right: 10px;
+                border-right: 1px solid #CCC;
+            }
+
     #ledendiv ul {
         display: block;
-        margin:0;
-        padding:0;
+        margin: 0;
+        padding: 0;
     }
 
         #ledendiv ul li {
@@ -50,9 +102,8 @@
 
 
 
-input[type="button"]:hover,input[type="submit"]:hover,button:hover{
-    background-color:#EEE;
-}
+
+
 .form-style-1 {
     max-width: 300px;
     margin: 50px auto;
@@ -177,12 +228,14 @@ input[type="button"]:hover,input[type="submit"]:hover,button:hover{
 
 
 .user-btn-transparant {
-    width: auto;
-    height: auto;
-    margin-left: 2px;
+    width: 28px;
+    height: 24px;
+    text-align:center;
+    vertical-align:middle;
+    margin:0;
+    padding:0;
     background-color: transparent;
-    border: 1px solid;
-    border-color: transparent;
+    border:1px solid #DDD;
     overflow: hidden;
     outline: none;
 }
@@ -192,4 +245,48 @@ input[type="button"]:hover,input[type="submit"]:hover,button:hover{
         background-color: #EEE;
     }
 
+img {
+    padding: 5px;
+    padding-top: 3px;
+}
 
+.lid-general {
+    width: 100%;
+    min-height: 100px;
+    box-sizing: border-box;
+    margin: 10px 0px 15px 0px;
+    padding: 10px;
+    background-color: rgba(250,250,250,1);
+    box-shadow: 3px 3px 10px 0px rgba(0,0,0,0.3);
+    border: 1px solid #CCC;
+}
+
+    .lid-general:hover {
+        background-color: rgba(245,245,245,1);
+    }
+
+.lid-info {
+    width: 33%;
+    float: left;
+}
+.lid-info-name{
+    float:left;
+}
+.lid-info-buttons{
+    float:left;
+    margin-left: 50px;
+}
+
+.lid-noodpersonen {
+    width: 33%;
+    float: left;
+}
+
+.lid-beschermelingen {
+    width: 33%;
+    float: left;
+}
+
+.lid-footer {
+    clear: both;
+}

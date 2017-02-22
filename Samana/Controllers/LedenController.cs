@@ -10,6 +10,7 @@ using System.Data;
 using System.IO;
 using DataSource;
 using System.Net;
+using Samana.Models;
 
 namespace Samana.Controllers
 {
@@ -19,52 +20,78 @@ namespace Samana.Controllers
         private LidService _lidService = new LidService();
         private NoodPersoonService _noodPersoonService = new NoodPersoonService();
         private ExportToExcelService _exportToExcelService = new ExportToExcelService();
+        private int limit = 5;
+        private Models.SearchOption _searchOption = new Models.SearchOption();
         // GET: Leden
-        public ActionResult Index()
+        public ActionResult Index(int? id)
         {
-            GeneralSetup();
-            SetInfo();
-
-            return View(_ledenViewModel);
-        }
-
-      
-        [HttpPost]
-        public ActionResult Index(int? soortId, string tekst, string tekstParam, string sortParam)
-        {
-            if (soortId == null && tekst == null && sortParam == null)
+            GeneralSetup();            
+            if (Request.IsAjaxRequest())
             {
-                _ledenViewModel.Leden = _lidService.LedenToViewModelList(_lidService.GetAlleLeden());
+                _searchOption = SetSearchOption();               
+                _searchOption.PageId = id ?? 0;
+                _ledenViewModel.Leden = SetLeden(_searchOption);                
+                return PartialView("~/Views/Partials/LedenData.cshtml",_ledenViewModel);
             }
             else
             {
-                //zoeken op lidsoort
-                if (soortId != null)
-                {
-                    if (soortId == 0)
-                    {
-                        _ledenViewModel.Leden = _lidService.LedenToViewModelList(_lidService.GetAlleLeden());
-                    }
-                    else
-                    {
-                        _ledenViewModel.Leden = _lidService.LedenToViewModelList(_lidService.GetLedenPerSoort(soortId));
-                    }
-                }
+                Session["searchoption"] = null;
+                _searchOption = SetSearchOption();
+                SetInfo(_lidService.LedenToViewModelList(_lidService.GetAlleLeden()));
+            }
 
-                //zoeken op naam
-                if (tekst != null && tekstParam != null)
+            return View(_ledenViewModel);
+        }
+        public Models.SearchOption SetSearchOption()
+        {
+            if(Session["searchoption"] == null)
+            {
+                _searchOption.Option = SearchOptionEnum.AlleLeden.ToString();
+                Session["searchoption"] = _searchOption;
+            }
+
+            return Session["searchoption"] as Models.SearchOption;
+        }
+        
+
+        [HttpPost]
+        public ActionResult Index(int? id, int? soortId, string tekst, string tekstParam, string sortParam)
+        {
+            _searchOption.PageId = id;
+
+            //zoeken op lidsoort
+            if (soortId != null)
+            {
+                if (soortId == 0)
                 {
-                    switch (tekstParam)
-                    {
-                        case "Voornaam":
-                            _ledenViewModel.Leden = _lidService.LedenToViewModelList(_lidService.GetLedenOpVoorNaam(tekst));
-                            break;
-                        case "Achternaam":
-                            _ledenViewModel.Leden = _lidService.LedenToViewModelList(_lidService.GetLedenOpAchterNaam(tekst));
-                            break;
-                    }
+                    _searchOption.Option = SearchOptionEnum.AlleLeden.ToString();
+                }
+                else
+                {
+                    _searchOption.Option = SearchOptionEnum.Lidsoort.ToString();
+                    _searchOption.IntValue = soortId;
                 }
             }
+
+            //zoeken op naam
+            else if (tekst != null && tekstParam != null)
+            {
+                if (tekstParam == "Voornaam") {
+                    _searchOption.Option = SearchOptionEnum.Voornaam.ToString();
+                }
+                if(tekstParam == "Achternaam")
+                {
+                    _searchOption.Option = SearchOptionEnum.Achternaam.ToString();
+                }
+                _searchOption.StringValue1 = tekst;
+            }
+            else
+            {
+                _searchOption.Option = SearchOptionEnum.AlleLeden.ToString();
+            }
+
+
+
             foreach (var pers in _noodPersoonService.GetAlleNoodPersonen())
             {
                 LidViewModel lid = _ledenViewModel.Leden.Find(m => m.Id == pers.LidId);
@@ -72,37 +99,72 @@ namespace Samana.Controllers
                 {
                     lid.NoodPersonen.Add(pers);
                 }
-            }
+            }           
 
-            SetInfo();
-
+            Session["searchoption"] = _searchOption;
+            
+            _ledenViewModel.Leden = SetLeden(_searchOption);
             return View(_ledenViewModel);
+        }
+
+        public List<LidViewModel> SetLeden(Models.SearchOption searchOption)
+        {
+            int page = Convert.ToInt16(searchOption.PageId) * limit;
+            List<LidViewModel> ledenlist = new List<LidViewModel>();
+            switch ((SearchOptionEnum)Enum.Parse(typeof(SearchOptionEnum), searchOption.Option))
+            {
+                case SearchOptionEnum.AlleLeden:
+                    _ledenViewModel.Leden = _lidService.LedenToViewModelList(_lidService.GetAlleLedenByStep(limit, page));
+                    ledenlist = _lidService.LedenToViewModelList(_lidService.GetAlleLeden());
+                    SetInfo(ledenlist);
+                    break;
+                case SearchOptionEnum.Lidsoort:
+                    _ledenViewModel.Leden = _lidService.LedenToViewModelList(_lidService.GetLedenPerSoortByStep(_searchOption.IntValue, limit, page));
+                    ledenlist = _lidService.LedenToViewModelList(_lidService.GetLedenPerSoort(_searchOption.IntValue));
+                    SetInfo(ledenlist);
+                    break;
+                case SearchOptionEnum.Voornaam:
+                    _ledenViewModel.Leden = _lidService.LedenToViewModelList(_lidService.GetLedenOpVoorNaamByStep(_searchOption.StringValue1, limit, page));
+                    ledenlist = _lidService.LedenToViewModelList(_lidService.GetLedenOpVoorNaam(_searchOption.StringValue1));
+                    SetInfo(ledenlist);
+                    break;
+                case SearchOptionEnum.Achternaam:
+                    _ledenViewModel.Leden = _lidService.LedenToViewModelList(_lidService.GetLedenOpAchterNaamByStep(_searchOption.StringValue1, limit, page));
+                    ledenlist = _lidService.LedenToViewModelList(_lidService.GetLedenOpAchterNaam(_searchOption.StringValue1));
+                    SetInfo(ledenlist);
+                    break;
+            }
+            return _ledenViewModel.Leden;
         }
 
         public void GeneralSetup()
         {
-            
             foreach (var pers in _noodPersoonService.GetAlleNoodPersonen())
             {
                 if(_ledenViewModel.Leden.Find(m=>m.Id == pers.LidId) != null){
                     _ledenViewModel.Leden.Find(m => m.Id == pers.LidId).NoodPersonen.Add(pers);
-                }
-                
+                }               
             }
         }
 
-        public void SetInfo()
+        public void SetInfo(List<LidViewModel> ledenlist)
         {
-            LidViewModel oudstelid = _lidService.GetOudsteLid(_ledenViewModel.Leden);
+
+            LidViewModel oudstelid = _lidService.GetOudsteLid(ledenlist);
             TempData["oudstelid"] = oudstelid.Voornaam + " " + oudstelid.Achternaam + " (" + oudstelid.Leeftijd + " jaar)";
 
-            LidViewModel jongstelid = _lidService.GetjongsteLid(_ledenViewModel.Leden);
+            LidViewModel jongstelid = _lidService.GetjongsteLid(ledenlist);
             TempData["jongstelid"] = jongstelid.Voornaam + " " + jongstelid.Achternaam + " (" + jongstelid.Leeftijd + " jaar)";
 
-            TempData["aantalkernleden"] = _ledenViewModel.Leden.Count(m => m.LidsoortId == 1);
-            TempData["aantalmedewerkers"] = _ledenViewModel.Leden.Count(m => m.LidsoortId == 2);
-            TempData["aantalgewoneleden"] = _ledenViewModel.Leden.Count(m => m.LidsoortId == 3);
+            TempData["aantalLeden"] = ledenlist.Count();
+            TempData["aantalkernleden"] = ledenlist.Count(m => m.LidsoortId == 1);
+            TempData["aantalmedewerkers"] = ledenlist.Count(m => m.LidsoortId == 2);
+            TempData["aantalgewoneleden"] = ledenlist.Count(m => m.LidsoortId == 3);
+            TempData["aantalmannen"] = ledenlist.Count(m => m.Geslacht == DataSource.Enums.Geslacht.man);
+            TempData["aantalvrouwen"] = ledenlist.Count(m => m.Geslacht == DataSource.Enums.Geslacht.vrouw);
+
         }
+
 
         public ActionResult Create()
         {
@@ -229,15 +291,15 @@ namespace Samana.Controllers
         {
             string appPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-            //string excelFilePath = @"C:\Users\Nick\Google Drive\Projects\Samana\Samana\Files\mentor_verjaardagen.xlsx";
-            //string picPath = @"C:\Users\Nick\Google Drive\Projects\Samana\Samana\Img\samana_meerhout.png";
+            string excelFilePath = @"C:\Users\Nick\Google Drive\Projects\Samana\Samana\Files\mentor_verjaardagen.xlsx";
+            string picPath = @"C:\Users\Nick\Google Drive\Projects\Samana\Samana\Img\samana_meerhout.png";
 
-            string excelFilePath = @"C:\inetpub\wwwroot\Samana\files\mentor_verjaardagen.xlsx";
-            string picPath = @"C:\inetpub\wwwroot\Samana\Img\samana_meerhout.png";
+            //string excelFilePath = @"C:\inetpub\wwwroot\Samana\files\mentor_verjaardagen.xlsx";
+            //string picPath = @"C:\inetpub\wwwroot\Samana\Img\samana_meerhout.png";
 
             _exportToExcelService.CreatePackage(excelFilePath, picPath);
             _exportToExcelService.CreateMentorSheet(excelFilePath, id);
-
+            _exportToExcelService.CreateVerjaardagen(excelFilePath, id);
 
             Response.Clear();
             Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

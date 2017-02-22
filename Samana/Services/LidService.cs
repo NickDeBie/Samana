@@ -76,13 +76,25 @@ namespace Samana.Services
         {
             return (from lid in _db.Leden where lid.Voornaam.StartsWith(beginNaam) orderby lid.Achternaam select lid).ToList();
         }
+        public List<Lid> GetLedenOpVoorNaamByStep(string beginNaam, int limit, int fromRowNumber)
+        {
+            return _db.Leden.Include(l => l.Gemeente).Include(l => l.Lidsoort).Include(l => l.Mentor).Include(l => l.Verantwoordelijkheden).Include(l => l.NoodPersonen).Where(m => m.Voornaam.StartsWith(beginNaam)).OrderBy(o => o.Achternaam).Skip(fromRowNumber).Take(limit).ToList();
+        }
         public List<Lid> GetLedenOpAchterNaam(string beginNaam)
         {
             return (from lid in _db.Leden where lid.Achternaam.StartsWith(beginNaam) orderby lid.Achternaam select lid).ToList();
         }
+        public List<Lid> GetLedenOpAchterNaamByStep(string beginNaam, int limit, int fromRowNumber)
+        {
+            return _db.Leden.Include(l => l.Gemeente).Include(l => l.Lidsoort).Include(l => l.Mentor).Include(l => l.Verantwoordelijkheden).Include(l => l.NoodPersonen).Where(m => m.Achternaam.StartsWith(beginNaam)).OrderBy(o => o.Achternaam).Skip(fromRowNumber).Take(limit).ToList();
+        }
         public List<Lid> GetLedenPerSoort(int? id)
         {
             return (from lid in _db.Leden where lid.LidsoortId == id orderby lid.Achternaam select lid).ToList();
+        }
+        public List<Lid> GetLedenPerSoortByStep(int? id, int limit, int fromRowNumber)
+        {
+            return _db.Leden.Include(l => l.Gemeente).Include(l => l.Lidsoort).Include(l => l.Mentor).Include(l => l.Verantwoordelijkheden).Include(l => l.NoodPersonen).OrderBy(o => o.Achternaam).Where(m=>m.LidsoortId == id).OrderBy(m=>m.Achternaam).Skip(fromRowNumber).Take(limit).ToList();            
         }
         public LidViewModel LidToLidViewModel(Lid lid)
         {
