@@ -190,7 +190,7 @@ namespace Samana.Controllers
         }
         public ActionResult Edit(int? id)
         {
-            LidViewModel lidviewModel = _ledenViewModel.Leden.Find(m => m.Id == id);
+            LidViewModel lidviewModel = _lidService.LidToLidViewModel(_lidService.GetAlleLeden().Find(m => m.Id == id));
             _ledenViewModel.Leden = new List<LidViewModel>();
             _ledenViewModel.Leden.Add(lidviewModel);
             return View(_ledenViewModel);
@@ -215,7 +215,7 @@ namespace Samana.Controllers
 
         public ActionResult Delete(int? id)
         {
-            LidViewModel lidViewModel = _ledenViewModel.Leden.Find(m => m.Id == id);
+            LidViewModel lidViewModel = _lidService.LidToLidViewModel(_lidService.GetAlleLeden().Find(m => m.Id == id));
             return View(lidViewModel);
         }
 
@@ -228,7 +228,7 @@ namespace Samana.Controllers
 
         public ActionResult AddNoodPersoon(int? id)
         {
-            LidViewModel lidViewModel = _ledenViewModel.Leden.Find(m => m.Id == id);
+            LidViewModel lidViewModel = _lidService.LidToLidViewModel(_lidService.GetAlleLeden().Find(m => m.Id == id));
             NoodPersoon noodpersoon = new NoodPersoon();
             noodpersoon.Id = _noodPersoonService.GetMaxId() + 1;
             noodpersoon.LidId = lidViewModel.Id;
