@@ -10,7 +10,7 @@ Dit project is gestart om mijn moeder te helpen bij haar vrijwilligerswerk bij S
 
 Technologiekeuze
 ----------------
-Ik heb gekozen om webapplicatie in ASP te maken met MVC. Dit om de simpele reden dat ik hierin ervaring wou opdoen. In zowel C# als met HTML, CSS, Javascript/Jquery. De database is opgesteld met behulp van entity framework in mySQL. 
+Ik heb gekozen om webapplicatie in ASP te maken met MVC. Dit om de simpele reden dat ik hierin ervaring wou opdoen. In zowel C# als met HTML, CSS, Javascript/Jquery. De database is opgesteld met behulp van entity framework en mySQL. 
 
 
 
