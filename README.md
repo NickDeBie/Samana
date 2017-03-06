@@ -24,3 +24,8 @@ De kernleden krijgen een extra knop om daarvan een excel bestand te genereren en
 De eerste sheet bevat het kernlid en zijn/haar 'beschermelingen' en hun adres. Deze lijst is bedoeld voor het kernlid om zijn beschermelingen te bezoeken. Er staat dan ook bij om hoeveel beschermelingen het gaat en om hoeveel te bezoeken huizen.
 In de tweede sheet staan de verjaardagen van elke beschermeling. Deze worden tevens gesorteerd op eerstkomende verjaardag. 
 
+
+
+Nog te komen/uitbreidingen van de applicatie
+--------------------------------------------
+Op de wijzigingen dat mijn 'klant' wenst na, ben ik nog van plan ben om aan deze applicatie toe te voegen. Eén uitbreiding is de mogelijkheid om evenementen en bijeenkomsten te plannen. In een aangemaakt evenement kunnen dan leden toegevoegd worden en er wordt dan bijgehouden of het eventuele inschrijvingsgeld al dan niet betaald is. De mogelijkheid om hiervan ook een excel bestand te maken zal ook geïmplementeerd worden.
