@@ -13,7 +13,10 @@ Technologiekeuze
 Ik heb gekozen om webapplicatie in ASP te maken met MVC. Dit om de simpele reden dat ik hierin ervaring wou opdoen. In zowel C# als met HTML, CSS, Javascript/Jquery. De database is opgesteld met behulp van entity framework in mySQL. 
 
 
+
 Beschrijving van de applicatie
 ------------------------------
+De database bevat al de gegevens van de leden. Er zijn 3 verschillende leden. Kernleden, medewerkers en gewoon leden. De kernleden zijn mentor van verschillende medewerkers en gewoon leden. Deze worden op het startscherm getoond en afhankelijk van de lidsoort wordt de belangrijkste informatie getoond. Zoals noodpersonen, familie/vrienden die men kan contacteren in geval van nood. Er wordt ook wat algemene info getoond over de leden in het algemeen. Deze is niet noodzakelijk maar zijn er eerder als leuke weetjes.
 
-De database bevat al de gegevens van de leden. Er zijn 3 verschillende leden. Kernleden, medewerkers en gewoon leden. De kernleden zijn mentor van verschillende medewerkers en gewoon leden. 
+Men kan hier ook een nieuw lid aanmaken of de bestaande leden aanpassen. Ook heb ik een paar zoekfuncties toegevoegd om leden te zoeken op lidsoort of op voornaam/familienaam.
+De kernleden krijgen een extra knop om daarvan een excel bestand te genereren en vervolgens te downloaden. In dit excel bestand worden 2 worksheets aangemaakt. De eerste scheet bevat het kernlid en zijn/haar 'beschermelingen'
