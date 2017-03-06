@@ -16,7 +16,11 @@ Ik heb gekozen om webapplicatie in ASP te maken met MVC. Dit om de simpele reden
 
 Beschrijving van de applicatie
 ------------------------------
-De database bevat al de gegevens van de leden. Er zijn 3 verschillende leden. Kernleden, medewerkers en gewoon leden. De kernleden zijn mentor van verschillende medewerkers en gewoon leden. Deze worden op het startscherm getoond en afhankelijk van de lidsoort wordt de belangrijkste informatie getoond. Zoals noodpersonen, familie/vrienden die men kan contacteren in geval van nood. Er wordt ook wat algemene info getoond over de leden in het algemeen. Deze is niet noodzakelijk maar zijn er eerder als leuke weetjes.
+De database bevat al de gegevens van de leden. Er zijn 3 verschillende leden. Kernleden, medewerkers en gewoon leden. De kernleden zijn mentor van verschillende medewerkers en gewoon leden. Deze worden op het startscherm getoond en afhankelijk van de lidsoort wordt de belangrijkste informatie getoond. Zoals noodpersonen, familie/vrienden die men kan contacteren in geval van nood. Er wordt ook wat algemene info getoond over de leden in het algemeen. Deze info is niet noodzakelijk maar zijn er eerder als leuke weetjes.
 
-Men kan hier ook een nieuw lid aanmaken of de bestaande leden aanpassen. Ook heb ik een paar zoekfuncties toegevoegd om leden te zoeken op lidsoort of op voornaam/familienaam.
-De kernleden krijgen een extra knop om daarvan een excel bestand te genereren en vervolgens te downloaden. In dit excel bestand worden 2 worksheets aangemaakt. De eerste scheet bevat het kernlid en zijn/haar 'beschermelingen'
+Op dit scherm kan ook een nieuw lid aangemaakt worden of de bestaande leden kunnen worden aangepast. Ook heb ik een paar zoekfuncties toegevoegd om leden te zoeken op lidsoort of op voornaam/familienaam.
+
+De kernleden krijgen een extra knop om daarvan een excel bestand te genereren en vervolgens te downloaden. In dit excel bestand worden 2 worksheets aangemaakt. 
+De eerste sheet bevat het kernlid en zijn/haar 'beschermelingen' en hun adres. Deze lijst is bedoeld voor het kernlid om zijn beschermelingen te bezoeken. Er staat dan ook bij om hoeveel beschermelingen het gaat en om hoeveel te bezoeken huizen.
+In de tweede sheet staan de verjaardagen van elke beschermeling. Deze worden tevens gesorteerd op eerstkomende verjaardag. 
+
